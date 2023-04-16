@@ -10,7 +10,7 @@
 [![Contributors](https://img.shields.io/github/contributors/samber/slog-gin)](https://github.com/samber/slog-gin/graphs/contributors)
 [![License](https://img.shields.io/github/license/samber/slog-gin)](./LICENSE)
 
-Gin middleware to log http requests using [slog](https://pkg.go.dev/golang.org/x/exp/slog).
+[Gin](https://github.com/gin-gonic/gin) middleware to log http requests using [slog](https://pkg.go.dev/golang.org/x/exp/slog).
 
 **See also:**
 
