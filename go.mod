@@ -2,7 +2,7 @@ module github.com/samber/slog-gin
 
 go 1.20
 
-require golang.org/x/exp v0.0.0-20230321023759-10a507213a29
+require golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 
 require (
 	github.com/bytedance/sonic v1.8.0 // indirect
