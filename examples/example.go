@@ -44,5 +44,5 @@ func main() {
 	}
 
 	// output:
-	// time=2023-04-10T14:00:0.000000+00:00 level=ERROR msg="HTTP Request" gin_mode=GIN_MODE http.status=200 http.method=GET http.path=/pong http.ip=127.0.0.1 http.latency=25.5µs http.user-agent=curl/7.77.0 http.time=2023-04-10T14:00:00.000+00:00
+	// time=2023-04-10T14:00:0.000000+00:00 level=ERROR msg="Incoming request" gin_mode=GIN_MODE http.status=200 http.method=GET http.path=/pong http.ip=127.0.0.1 http.latency=25.5µs http.user-agent=curl/7.77.0 http.time=2023-04-10T14:00:00.000+00:00
 }
