@@ -45,12 +45,6 @@ github.com/pelletier/go-toml/v2 v2.0.6/go.mod h1:eumQOmlWiOPt5WriQQqoM5y18pDHwha
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.8.0 h1:FCbCCtXNOY3UtUuHUYaghJg4y7Fd14rXifAYUAtL9R8=
-github.com/samber/lo v1.38.1 h1:j2XEAqXKb09Am4ebOg31SpvzUTTs6EN3VfgeLUhPdXM=
-github.com/samber/lo v1.38.1/go.mod h1:+m/ZKRl6ClXCE2Lgf3MsQlWfh4bn1bz6CXEOxnEXnEA=
-github.com/samber/slog-formatter v0.3.3 h1:VCoKANbPtXf00CtnvKn/BZ7gcH1dBBnm48PAH854ynQ=
-github.com/samber/slog-formatter v0.3.3/go.mod h1:C8LO3jmgtpSAxw7pm9xLjPcJ/h4qzw3OfVIMASyEKQ0=
-github.com/samber/slog-multi v0.4.0 h1:QTQAo+9AP295irccqKdNwJ/2XflRMuL/aHqk7RblOhE=
-github.com/samber/slog-multi v0.4.0/go.mod h1:QDicB1R5oTcbSSqlYmskphC7fNcjHgdxqZdns1eAvDc=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
