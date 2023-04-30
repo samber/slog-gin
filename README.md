@@ -14,16 +14,25 @@
 
 **See also:**
 
-- [slog-multi](https://github.com/samber/slog-multi): workflows of `slog` handlers (pipeline, fanout, ...)
+- [slog-multi](https://github.com/samber/slog-formatter): `slog.Handler` chaining, fanout, routing, failover, load balancing...
 - [slog-formatter](https://github.com/samber/slog-formatter): `slog` attribute formatting
+- [slog-gin](https://github.com/samber/slog-gin): Gin middleware for `slog` logger
+- [slog-echo](https://github.com/samber/slog-echo): Echo middleware for `slog` logger
+- [slog-fiber](https://github.com/samber/slog-fiber): Fiber middleware for `slog` logger
 - [slog-datadog](https://github.com/samber/slog-datadog): A `slog` handler for `Datadog`
-- [slog-logstash](https://github.com/samber/slog-logstash): A `slog` handler for `Logstash`
-- [slog-slack](https://github.com/samber/slog-slack): A `slog` handler for `Slack`
-- [slog-loki](https://github.com/samber/slog-loki): A `slog` handler for `Loki`
+- [slog-rollbar](https://github.com/samber/slog-rollbar): A `slog` handler for `Rollbar`
 - [slog-sentry](https://github.com/samber/slog-sentry): A `slog` handler for `Sentry`
-- [slog-fluentd](https://github.com/samber/slog-fluentd): A `slog` handler for `Fluentd`
 - [slog-syslog](https://github.com/samber/slog-syslog): A `slog` handler for `Syslog`
+- [slog-logstash](https://github.com/samber/slog-logstash): A `slog` handler for `Logstash`
+- [slog-fluentd](https://github.com/samber/slog-fluentd): A `slog` handler for `Fluentd`
 - [slog-graylog](https://github.com/samber/slog-graylog): A `slog` handler for `Graylog`
+- [slog-loki](https://github.com/samber/slog-loki): A `slog` handler for `Loki`
+- [slog-slack](https://github.com/samber/slog-slack): A `slog` handler for `Slack`
+- [slog-telegram](https://github.com/samber/slog-telegram): A `slog` handler for `Telegram`
+- [slog-mattermost](https://github.com/samber/slog-mattermost): A `slog` handler for `Mattermost`
+- [slog-microsoft-teams](https://github.com/samber/slog-microsoft-teams): A `slog` handler for `Microsoft Teams`
+- [slog-webhook](https://github.com/samber/slog-webhook): A `slog` handler for `Webhook`
+- [slog-kafka](https://github.com/samber/slog-kafka): A `slog` handler for `Kafka`
 
 ## 🚀 Install
 
@@ -43,10 +52,6 @@ No breaking changes will be made to exported APIs before v1.0.0.
 
 ```go
 import (
-	"net/http"
-	"os"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 	"golang.org/x/exp/slog"
@@ -70,19 +75,16 @@ router.GET("/pong", func(c *gin.Context) {
 router.Run(":1234")
 
 // output:
-// time=2023-04-10T14:00:0.000000+02:00 level=INFO msg="Incoming request" status=200 method=GET path=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000+02:00
+// time=2023-04-10T14:00:0.000000Z level=INFO msg="Incoming request" status=200 method=GET path=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000Z
 ```
 
 ### Using custom time formatters
 
 ```go
 import (
-	"net/http"
-	"os"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
+	slogformatter "github.com/samber/slog-formatter"
 	"golang.org/x/exp/slog"
 )
 
@@ -119,10 +121,6 @@ router.Run(":1234")
 
 ```go
 import (
-	"net/http"
-	"os"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 	"golang.org/x/exp/slog"
@@ -153,10 +151,6 @@ router.Run(":1234")
 
 ```go
 import (
-	"net/http"
-	"os"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 	"golang.org/x/exp/slog"
@@ -184,10 +178,6 @@ router.Run(":1234")
 
 ```go
 import (
-	"net/http"
-	"os"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 	"golang.org/x/exp/slog"
@@ -222,10 +212,6 @@ router.Run(":1234")
 
 ```go
 import (
-	"net/http"
-	"os"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 	"golang.org/x/exp/slog"

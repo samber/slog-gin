@@ -31,7 +31,7 @@ func main() {
 
 	// Add the sloggin middleware to all routes.
 	// The middleware will log all requests attributes under a "http" group.
-	router.Use(sloggin.New(logger.WithGroup("http")))
+	router.Use(sloggin.New(logger))
 
 	// Example pong request.
 	router.GET("/pong", func(c *gin.Context) {
