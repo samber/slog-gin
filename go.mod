@@ -36,4 +36,5 @@ require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/google/uuid v1.3.0
 	github.com/samber/slog-formatter v0.3.3
+	go.uber.org/goleak v1.2.1
 )
