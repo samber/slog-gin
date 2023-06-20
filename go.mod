@@ -2,7 +2,7 @@ module github.com/samber/slog-gin
 
 go 1.20
 
-require golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
+require golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 
 require (
 	github.com/bytedance/sonic v1.8.0 // indirect
@@ -20,7 +20,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/samber/lo v1.38.1 // indirect
-	github.com/samber/slog-multi v0.4.0 // indirect
+	github.com/samber/slog-multi v0.6.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.9 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
@@ -35,6 +35,6 @@ require (
 require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/google/uuid v1.3.0
-	github.com/samber/slog-formatter v0.3.3
+	github.com/samber/slog-formatter v0.6.0
 	go.uber.org/goleak v1.2.1
 )

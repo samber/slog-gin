@@ -20,7 +20,7 @@ func main() {
 			slogformatter.TimezoneConverter(time.UTC),
 			slogformatter.TimeFormatter(time.RFC3339, nil),
 		)(
-			slog.NewJSONHandler(os.Stdout),
+			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}),
 		),
 	)
 
