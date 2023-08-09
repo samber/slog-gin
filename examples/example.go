@@ -5,10 +5,11 @@ import (
 	"os"
 	"time"
 
+	"log/slog"
+
 	"github.com/gin-gonic/gin"
 	slogformatter "github.com/samber/slog-formatter"
 	sloggin "github.com/samber/slog-gin"
-	"golang.org/x/exp/slog"
 )
 
 func main() {
