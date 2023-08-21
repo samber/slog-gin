@@ -219,7 +219,7 @@ import (
 
 // Create a slog logger, which:
 //   - Logs to stdout.
-logger := slog.New(slog.NewJSONHandler(os.Stdout))
+logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 router := gin.New()
 
