@@ -59,7 +59,7 @@ import (
 
 // Create a slog logger, which:
 //   - Logs to stdout.
-logger := slog.New(slog.NewTextHandler(os.Stdout))
+logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 router := gin.New()
 
@@ -96,7 +96,7 @@ logger := slog.New(
         slogformatter.TimezoneConverter(time.UTC),
         slogformatter.TimeFormatter(time.DateTime, nil),
     )(
-        slog.NewTextHandler(os.Stdout),
+        slog.NewTextHandler(os.Stdout, nil),
     ),
 )
 
@@ -128,7 +128,7 @@ import (
 
 // Create a slog logger, which:
 //   - Logs to stdout.
-logger := slog.New(slog.NewTextHandler(os.Stdout))
+logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 router := gin.New()
 
@@ -158,7 +158,7 @@ import (
 
 // Create a slog logger, which:
 //   - Logs to stdout.
-logger := slog.New(slog.NewTextHandler(os.Stdout))
+logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 router := gin.New()
 
@@ -185,7 +185,7 @@ import (
 
 // Create a slog logger, which:
 //   - Logs to stdout.
-logger := slog.New(slog.NewTextHandler(os.Stdout)).
+logger := slog.New(slog.NewTextHandler(os.Stdout, nil)).
     With("environment", "production").
     With("server", "gin/1.9.0").
     With("server_start_time", time.Now()).
