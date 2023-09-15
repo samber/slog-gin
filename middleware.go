@@ -19,6 +19,8 @@ type Config struct {
 	ServerErrorLevel slog.Level
 
 	WithRequestID bool
+
+	Filters []Filter
 }
 
 // New returns a gin.HandlerFunc (middleware) that logs requests using slog.
@@ -32,6 +34,24 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 		ServerErrorLevel: slog.LevelError,
 
 		WithRequestID: true,
+
+		Filters: []Filter{},
+	})
+}
+
+// NewWithFilters returns a gin.HandlerFunc (middleware) that logs requests using slog.
+//
+// Requests with errors are logged using slog.Error().
+// Requests without errors are logged using slog.Info().
+func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
+	return NewWithConfig(logger, Config{
+		DefaultLevel:     slog.LevelInfo,
+		ClientErrorLevel: slog.LevelWarn,
+		ServerErrorLevel: slog.LevelError,
+
+		WithRequestID: true,
+
+		Filters: filters,
 	})
 }
 
@@ -64,6 +84,12 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 
 		if config.WithRequestID {
 			attributes = append(attributes, slog.String("request-id", requestID))
+		}
+
+		for _, filter := range config.Filters {
+			if !filter(c) {
+				return
+			}
 		}
 
 		switch {

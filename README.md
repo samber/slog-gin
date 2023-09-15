@@ -78,6 +78,46 @@ router.Run(":1234")
 // time=2023-04-10T14:00:0.000000Z level=INFO msg="Incoming request" status=200 method=GET path=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000Z
 ```
 
+### Filters
+
+```go
+import (
+	"github.com/gin-gonic/gin"
+	sloggin "github.com/samber/slog-gin"
+	"log/slog"
+)
+
+logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+router := gin.New()
+router.Use(
+	sloggin.NewWithFilters(
+		logger,
+		sloggin.Accept(func (c *gin.Context) bool {
+			return xxx
+		}),
+		sloggin.IgnoreStatus(401, 404),
+	),
+)
+```
+
+Available filters:
+- Accept / Ignore
+- AcceptMethod / IgnoreMethod
+- AcceptStatus / IgnoreStatus
+- AcceptStatusGreaterThan / IgnoreStatusLessThan
+- AcceptStatusGreaterThanOrEqual / IgnoreStatusLessThanOrEqual
+- AcceptPath / IgnorePath
+- AcceptPathContains / IgnorePathContains
+- AcceptPathPrefix / IgnorePathPrefix
+- AcceptPathSuffix / IgnorePathSuffix
+- AcceptPathMatch / IgnorePathMatch
+- AcceptHost / IgnoreHost
+- AcceptHostContains / IgnoreHostContains
+- AcceptHostPrefix / IgnoreHostPrefix
+- AcceptHostSuffix / IgnoreHostSuffix
+- AcceptHostMatch / IgnoreHostMatch
+
 ### Using custom time formatters
 
 ```go
