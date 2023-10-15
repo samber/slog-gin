@@ -21,7 +21,7 @@ func main() {
 			slogformatter.TimezoneConverter(time.UTC),
 			slogformatter.TimeFormatter(time.RFC3339, nil),
 		)(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}),
+			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}),
 		),
 	)
 
@@ -33,9 +33,12 @@ func main() {
 	// Add the sloggin middleware to all routes.
 	// The middleware will log all requests attributes under a "http" group.
 	router.Use(sloggin.New(logger))
+	// config := sloggin.Config{WithRequestBody: true, WithResponseBody: true, WithRequestHeader: true, WithResponseHeader: true}
+	// router.Use(sloggin.NewWithConfig(logger, config))
 
 	// Example pong request.
 	router.GET("/pong", func(c *gin.Context) {
+		sloggin.AddCustomAttributes(c, slog.String("foo", "bar"))
 		c.String(http.StatusOK, "pong")
 	})
 	router.GET("/pong/:id", func(c *gin.Context) {
@@ -43,8 +46,8 @@ func main() {
 	})
 
 	logger.Info("Starting server")
-	if err := router.Run(":1234"); err != nil {
-		logger.Error("can' start server with 1234 port")
+	if err := router.Run(":4242"); err != nil {
+		logger.Error("can' start server with 4242 port")
 	}
 
 	// output:

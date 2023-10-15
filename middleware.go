@@ -1,8 +1,11 @@
 package sloggin
 
 import (
+	"bytes"
 	"context"
+	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"log/slog"
@@ -11,14 +14,35 @@ import (
 	"github.com/google/uuid"
 )
 
-const requestIDCtx = "slog-gin.request-id"
+const (
+	customAttributesCtxKey = "slog-gin.custom-attributes"
+	requestIDCtx           = "slog-gin.request-id"
+)
+
+var (
+	HiddenRequestHeaders = map[string]struct{}{
+		"authorization": {},
+		"cookie":        {},
+		"set-cookie":    {},
+		"x-auth-token":  {},
+		"x-csrf-token":  {},
+		"x-xsrf-token":  {},
+	}
+	HiddenResponseHeaders = map[string]struct{}{
+		"set-cookie": {},
+	}
+)
 
 type Config struct {
 	DefaultLevel     slog.Level
 	ClientErrorLevel slog.Level
 	ServerErrorLevel slog.Level
 
-	WithRequestID bool
+	WithRequestID      bool
+	WithRequestBody    bool
+	WithRequestHeader  bool
+	WithResponseBody   bool
+	WithResponseHeader bool
 
 	Filters []Filter
 }
@@ -33,7 +57,11 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
-		WithRequestID: true,
+		WithRequestID:      true,
+		WithRequestBody:    false,
+		WithRequestHeader:  false,
+		WithResponseBody:   false,
+		WithResponseHeader: false,
 
 		Filters: []Filter{},
 	})
@@ -49,7 +77,11 @@ func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
-		WithRequestID: true,
+		WithRequestID:      true,
+		WithRequestBody:    false,
+		WithRequestHeader:  false,
+		WithResponseBody:   false,
+		WithResponseHeader: false,
 
 		Filters: filters,
 	})
@@ -65,6 +97,21 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		if config.WithRequestID {
 			c.Set(requestIDCtx, requestID)
 			c.Header("X-Request-ID", requestID)
+		}
+
+		// dump request body
+		var reqBody []byte
+		if config.WithRequestBody {
+			buf, err := io.ReadAll(c.Request.Body)
+			if err == nil {
+				c.Request.Body = io.NopCloser(bytes.NewBuffer(buf))
+				reqBody = buf
+			}
+		}
+
+		// dump response body
+		if config.WithResponseBody {
+			c.Writer = newBodyWriter(c.Writer)
 		}
 
 		c.Next()
@@ -85,6 +132,42 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 
 		if config.WithRequestID {
 			attributes = append(attributes, slog.String("request-id", requestID))
+		}
+
+		// request
+		if config.WithRequestBody {
+			attributes = append(attributes, slog.Group("request", slog.String("body", string(reqBody))))
+		}
+		if config.WithRequestHeader {
+			for k, v := range c.Request.Header {
+				if _, found := HiddenRequestHeaders[strings.ToLower(k)]; found {
+					continue
+				}
+				attributes = append(attributes, slog.Group("request", slog.Group("header", slog.Any(k, v))))
+			}
+		}
+
+		// response
+		if config.WithResponseBody {
+			if w, ok := c.Writer.(*bodyWriter); ok {
+				attributes = append(attributes, slog.Group("response", slog.String("body", w.body.String())))
+			}
+		}
+		if config.WithResponseHeader {
+			for k, v := range c.Writer.Header() {
+				if _, found := HiddenResponseHeaders[strings.ToLower(k)]; found {
+					continue
+				}
+				attributes = append(attributes, slog.Group("response", slog.Group("header", slog.Any(k, v))))
+			}
+		}
+
+		// custom context values
+		if v, ok := c.Get(customAttributesCtxKey); ok {
+			switch attrs := v.(type) {
+			case []slog.Attr:
+				attributes = append(attributes, attrs...)
+			}
 		}
 
 		for _, filter := range config.Filters {
@@ -116,4 +199,17 @@ func GetRequestID(c *gin.Context) string {
 	}
 
 	return ""
+}
+
+func AddCustomAttributes(c *gin.Context, attr slog.Attr) {
+	v, exists := c.Get(customAttributesCtxKey)
+	if !exists {
+		c.Set(customAttributesCtxKey, []slog.Attr{attr})
+		return
+	}
+
+	switch attrs := v.(type) {
+	case []slog.Attr:
+		c.Set(customAttributesCtxKey, append(attrs, attr))
+	}
 }

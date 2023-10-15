@@ -82,15 +82,25 @@ router.Run(":1234")
 // time=2023-04-10T14:00:0.000000Z level=INFO msg="Incoming request" status=200 method=GET path=/pong route=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000Z
 ```
 
+### Verbose
+
+```go
+logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+config := sloggin.Config{
+	WithRequestBody: true,
+	WithResponseBody: true,
+	WithRequestHeader: true,
+	WithResponseHeader: true,
+}
+
+router := chi.NewRouter()
+router.Use(sloggin.NewWithConfig(logger, config))
+```
+
 ### Filters
 
 ```go
-import (
-	"github.com/gin-gonic/gin"
-	sloggin "github.com/samber/slog-gin"
-	"log/slog"
-)
-
 logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 router := gin.New()
@@ -164,14 +174,6 @@ router.Run(":1234")
 ### Using custom logger sub-group
 
 ```go
-import (
-	"github.com/gin-gonic/gin"
-	sloggin "github.com/samber/slog-gin"
-	"log/slog"
-)
-
-// Create a slog logger, which:
-//   - Logs to stdout.
 logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 router := gin.New()
@@ -194,14 +196,6 @@ router.Run(":1234")
 ### Add logger to a single route
 
 ```go
-import (
-	"github.com/gin-gonic/gin"
-	sloggin "github.com/samber/slog-gin"
-	"log/slog"
-)
-
-// Create a slog logger, which:
-//   - Logs to stdout.
 logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 router := gin.New()
@@ -221,14 +215,6 @@ router.Run(":1234")
 ### Adding custom attributes
 
 ```go
-import (
-	"github.com/gin-gonic/gin"
-	sloggin "github.com/samber/slog-gin"
-	"log/slog"
-)
-
-// Create a slog logger, which:
-//   - Logs to stdout.
 logger := slog.New(slog.NewTextHandler(os.Stdout, nil)).
     With("environment", "production").
     With("server", "gin/1.9.0").
@@ -243,26 +229,20 @@ router.Use(sloggin.New(logger))
 
 // Example pong request.
 router.GET("/pong", func(c *gin.Context) {
+	// Add an attribute to a single log entry.
+	sloggin.AddCustomAttributes(c, slog.String("foo", "bar"))
     c.String(http.StatusOK, "pong")
 })
 
 router.Run(":1234")
 
 // output:
-// time=2023-04-10T14:00:0.000000+02:00 level=INFO msg="Incoming request" environment=production server=gin/1.9.0 gin_mode=release server_start_time=2023-04-10T10:00:00.000+02:00 status=200 method=GET path=/pong route=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000+02:00
+// time=2023-04-10T14:00:0.000000+02:00 level=INFO msg="Incoming request" environment=production server=gin/1.9.0 gin_mode=release server_start_time=2023-04-10T10:00:00.000+02:00 status=200 method=GET path=/pong route=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000+02:00 foo=bar
 ```
 
 ### JSON output
 
 ```go
-import (
-	"github.com/gin-gonic/gin"
-	sloggin "github.com/samber/slog-gin"
-	"log/slog"
-)
-
-// Create a slog logger, which:
-//   - Logs to stdout.
 logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 router := gin.New()
