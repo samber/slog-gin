@@ -38,6 +38,9 @@ func main() {
 	router.GET("/pong", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
 	})
+	router.GET("/pong/:id", func(c *gin.Context) {
+		c.String(http.StatusOK, "pong")
+	})
 
 	logger.Info("Starting server")
 	if err := router.Run(":1234"); err != nil {

@@ -76,6 +76,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			slog.Int("status", c.Writer.Status()),
 			slog.String("method", c.Request.Method),
 			slog.String("path", path),
+			slog.String("route", c.FullPath()),
 			slog.String("ip", c.ClientIP()),
 			slog.Duration("latency", latency),
 			slog.String("user-agent", c.Request.UserAgent()),
