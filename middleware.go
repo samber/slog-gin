@@ -20,6 +20,9 @@ const (
 )
 
 var (
+	RequestBodyMaxSize  = 64 * 1024 // 64KB
+	ResponseBodyMaxSize = 64 * 1024 // 64KB
+
 	HiddenRequestHeaders = map[string]struct{}{
 		"authorization": {},
 		"cookie":        {},
@@ -105,13 +108,17 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			buf, err := io.ReadAll(c.Request.Body)
 			if err == nil {
 				c.Request.Body = io.NopCloser(bytes.NewBuffer(buf))
-				reqBody = buf
+				if len(buf) > RequestBodyMaxSize {
+					reqBody = buf[:RequestBodyMaxSize]
+				} else {
+					reqBody = buf
+				}
 			}
 		}
 
 		// dump response body
 		if config.WithResponseBody {
-			c.Writer = newBodyWriter(c.Writer)
+			c.Writer = newBodyWriter(c.Writer, ResponseBodyMaxSize)
 		}
 
 		c.Next()
