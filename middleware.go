@@ -118,9 +118,10 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 
 		end := time.Now()
 		latency := end.Sub(start)
+		status := c.Writer.Status()
 
 		attributes := []slog.Attr{
-			slog.Int("status", c.Writer.Status()),
+			slog.Int("status", status),
 			slog.String("method", c.Request.Method),
 			slog.String("path", path),
 			slog.String("route", c.FullPath()),
@@ -176,14 +177,17 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			}
 		}
 
-		switch {
-		case c.Writer.Status() >= http.StatusBadRequest && c.Writer.Status() < http.StatusInternalServerError:
-			logger.LogAttrs(context.Background(), config.ClientErrorLevel, c.Errors.String(), attributes...)
-		case c.Writer.Status() >= http.StatusInternalServerError:
-			logger.LogAttrs(context.Background(), config.ServerErrorLevel, c.Errors.String(), attributes...)
-		default:
-			logger.LogAttrs(context.Background(), config.DefaultLevel, "Incoming request", attributes...)
+		level := config.DefaultLevel
+		msg := "Incoming request"
+		if status >= http.StatusBadRequest && status < http.StatusInternalServerError {
+			level = config.ClientErrorLevel
+			msg = c.Errors.String()
+		} else if status >= http.StatusInternalServerError {
+			level = config.ServerErrorLevel
+			msg = c.Errors.String()
 		}
+
+		logger.LogAttrs(context.Background(), level, msg, attributes...)
 	}
 }
 
