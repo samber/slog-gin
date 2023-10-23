@@ -2,7 +2,6 @@ package sloggin
 
 import (
 	"bytes"
-	"context"
 	"io"
 	"net/http"
 	"strings"
@@ -194,7 +193,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			msg = c.Errors.String()
 		}
 
-		logger.LogAttrs(context.Background(), level, msg, attributes...)
+		logger.LogAttrs(c.Request.Context(), level, msg, attributes...)
 	}
 }
 
