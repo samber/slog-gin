@@ -70,6 +70,7 @@ router := gin.New()
 // Add the sloggin middleware to all routes.
 // The middleware will log all requests attributes.
 router.Use(sloggin.New(logger))
+router.Use(gin.Recovery())
 
 // Example pong request.
 router.GET("/pong", func(c *gin.Context) {
@@ -113,6 +114,7 @@ router.Use(
 		sloggin.IgnoreStatus(401, 404),
 	),
 )
+router.Use(gin.Recovery())
 ```
 
 Available filters:
@@ -159,6 +161,7 @@ router := gin.New()
 // Add the sloggin middleware to all routes.
 // The middleware will log all requests attributes.
 router.Use(sloggin.New(logger))
+router.Use(gin.Recovery())
 
 // Example pong request.
 router.GET("/pong", func(c *gin.Context) {
@@ -181,6 +184,7 @@ router := gin.New()
 // Add the sloggin middleware to all routes.
 // The middleware will log all requests attributes under a "http" group.
 router.Use(sloggin.New(logger.WithGroup("http")))
+router.Use(gin.Recovery())
 
 // Example pong request.
 router.GET("/pong", func(c *gin.Context) {
@@ -199,6 +203,7 @@ router.Run(":1234")
 logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 router := gin.New()
+router.Use(gin.Recovery())
 
 // Example pong request.
 // Add the sloggin middleware to a single routes.
@@ -226,6 +231,7 @@ router := gin.New()
 // Add the sloggin middleware to all routes.
 // The middleware will log all requests attributes.
 router.Use(sloggin.New(logger))
+router.Use(gin.Recovery())
 
 // Example pong request.
 router.GET("/pong", func(c *gin.Context) {
@@ -250,6 +256,7 @@ router := gin.New()
 // Add the sloggin middleware to all routes.
 // The middleware will log all requests attributes.
 router.Use(sloggin.New(logger))
+router.Use(gin.Recovery())
 
 // Example pong request.
 router.GET("/pong", func(c *gin.Context) {

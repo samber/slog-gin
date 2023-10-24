@@ -35,6 +35,7 @@ func main() {
 	router.Use(sloggin.New(logger))
 	// config := sloggin.Config{WithRequestBody: true, WithResponseBody: true, WithRequestHeader: true, WithResponseHeader: true}
 	// router.Use(sloggin.NewWithConfig(logger, config))
+	router.Use(gin.Recovery())
 
 	// Example pong request.
 	router.GET("/pong", func(c *gin.Context) {
