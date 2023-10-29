@@ -120,9 +120,10 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			c.Writer = newBodyWriter(c.Writer, ResponseBodyMaxSize)
 		}
 
+		end := time.Now()
+
 		c.Next()
 
-		end := time.Now()
 		latency := end.Sub(start)
 		status := c.Writer.Status()
 
