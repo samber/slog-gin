@@ -83,6 +83,20 @@ router.Run(":1234")
 // time=2023-04-10T14:00:0.000000Z level=INFO msg="Incoming request" status=200 method=GET path=/pong route=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000Z
 ```
 
+### OTEL
+
+```go
+logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+config := sloggin.Config{
+	WithSpanID:  true,
+	WithTraceID: true,
+}
+
+router := chi.NewRouter()
+router.Use(sloggin.NewWithConfig(logger, config))
+```
+
 ### Verbose
 
 ```go
