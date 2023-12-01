@@ -41,6 +41,7 @@ type Config struct {
 	ClientErrorLevel slog.Level
 	ServerErrorLevel slog.Level
 
+	WithUserAgent      bool
 	WithRequestID      bool
 	WithRequestBody    bool
 	WithRequestHeader  bool
@@ -62,6 +63,7 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
+		WithUserAgent:      false,
 		WithRequestID:      true,
 		WithRequestBody:    false,
 		WithRequestHeader:  false,
@@ -69,8 +71,7 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 		WithResponseHeader: false,
 		WithSpanID:         false,
 		WithTraceID:        false,
-
-		Filters: []Filter{},
+		Filters:            []Filter{},
 	})
 }
 
@@ -84,6 +85,7 @@ func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
+		WithUserAgent:      false,
 		WithRequestID:      true,
 		WithRequestBody:    false,
 		WithRequestHeader:  false,
@@ -140,8 +142,11 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			slog.String("route", c.FullPath()),
 			slog.String("ip", c.ClientIP()),
 			slog.Duration("latency", latency),
-			slog.String("user-agent", c.Request.UserAgent()),
 			slog.Time("time", end),
+		}
+
+		if config.WithUserAgent {
+			attributes = append(attributes, slog.String("user-agent", c.Request.UserAgent()))
 		}
 
 		if config.WithRequestID {
