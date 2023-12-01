@@ -41,6 +41,7 @@ type Config struct {
 	ClientErrorLevel slog.Level
 	ServerErrorLevel slog.Level
 
+	WithUserAgent      bool
 	WithRequestID      bool
 	WithRequestBody    bool
 	WithRequestHeader  bool
@@ -140,8 +141,11 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			slog.String("route", c.FullPath()),
 			slog.String("ip", c.ClientIP()),
 			slog.Duration("latency", latency),
-			slog.String("user-agent", c.Request.UserAgent()),
 			slog.Time("time", end),
+		}
+
+		if config.WithUserAgent {
+			attributes = append(attributes, slog.String("user-agent", c.Request.UserAgent()))
 		}
 
 		if config.WithRequestID {
