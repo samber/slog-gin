@@ -63,6 +63,7 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
+		WithUserAgent:      false,
 		WithRequestID:      true,
 		WithRequestBody:    false,
 		WithRequestHeader:  false,
@@ -70,8 +71,7 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 		WithResponseHeader: false,
 		WithSpanID:         false,
 		WithTraceID:        false,
-
-		Filters: []Filter{},
+		Filters:            []Filter{},
 	})
 }
 
@@ -85,6 +85,7 @@ func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
+		WithUserAgent:      false,
 		WithRequestID:      true,
 		WithRequestBody:    false,
 		WithRequestHeader:  false,
