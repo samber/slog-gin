@@ -41,14 +41,18 @@ type Config struct {
 	ClientErrorLevel slog.Level
 	ServerErrorLevel slog.Level
 
-	WithUserAgent      bool
-	WithRequestID      bool
+	WithClientIP       bool
+	WithHttpTime       bool
+	WithLatency        bool
+	WithPath           bool
 	WithRequestBody    bool
 	WithRequestHeader  bool
+	WithRequestID      bool
 	WithResponseBody   bool
 	WithResponseHeader bool
 	WithSpanID         bool
 	WithTraceID        bool
+	WithUserAgent      bool
 
 	Filters []Filter
 }
@@ -63,15 +67,20 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
-		WithUserAgent:      false,
-		WithRequestID:      true,
+		WithHttpTime:       true,
+		WithClientIP:       true,
+		WithLatency:        true,
+		WithPath:           true,
 		WithRequestBody:    false,
 		WithRequestHeader:  false,
+		WithRequestID:      true,
 		WithResponseBody:   false,
 		WithResponseHeader: false,
 		WithSpanID:         false,
 		WithTraceID:        false,
-		Filters:            []Filter{},
+		WithUserAgent:      false,
+
+		Filters: []Filter{},
 	})
 }
 
@@ -85,14 +94,18 @@ func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
-		WithUserAgent:      false,
-		WithRequestID:      true,
+		WithClientIP:       true,
+		WithHttpTime:       true,
+		WithLatency:        true,
+		WithPath:           true,
 		WithRequestBody:    false,
 		WithRequestHeader:  false,
+		WithRequestID:      true,
 		WithResponseBody:   false,
 		WithResponseHeader: false,
 		WithSpanID:         false,
 		WithTraceID:        false,
+		WithUserAgent:      false,
 
 		Filters: filters,
 	})
@@ -138,11 +151,23 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		attributes := []slog.Attr{
 			slog.Int("status", status),
 			slog.String("method", c.Request.Method),
-			slog.String("path", path),
 			slog.String("route", c.FullPath()),
-			slog.String("ip", c.ClientIP()),
-			slog.Duration("latency", latency),
-			slog.Time("time", end),
+		}
+
+		if config.WithClientIP {
+			attributes = append(attributes, slog.String("ip", c.ClientIP()))
+		}
+
+		if config.WithHttpTime {
+			attributes = append(attributes, slog.Time("time", end))
+		}
+
+		if config.WithLatency {
+			attributes = append(attributes, slog.Duration("latency", latency))
+		}
+
+		if config.WithPath {
+			attributes = append(attributes, slog.String("path", path))
 		}
 
 		if config.WithUserAgent {
