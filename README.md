@@ -94,7 +94,22 @@ config := sloggin.Config{
 	WithTraceID: true,
 }
 
-router := chi.NewRouter()
+router := gin.New()
+router.Use(sloggin.NewWithConfig(logger, config))
+```
+
+### Custom log levels
+
+```go
+logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+config := sloggin.Config{
+	DefaultLevel:     slog.LevelInfo,
+	ClientErrorLevel: slog.LevelWarn,
+	ServerErrorLevel: slog.LevelError,
+}
+
+router := gin.New()
 router.Use(sloggin.NewWithConfig(logger, config))
 ```
 
@@ -110,7 +125,7 @@ config := sloggin.Config{
 	WithResponseHeader: true,
 }
 
-router := chi.NewRouter()
+router := gin.New()
 router.Use(sloggin.NewWithConfig(logger, config))
 ```
 
@@ -129,7 +144,6 @@ router.Use(
 		sloggin.IgnoreStatus(401, 404),
 	),
 )
-router.Use(gin.Recovery())
 ```
 
 Available filters:
