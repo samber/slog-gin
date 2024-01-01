@@ -81,7 +81,7 @@ router.GET("/pong", func(c *gin.Context) {
 router.Run(":1234")
 
 // output:
-// time=2023-04-10T14:00:0.000000Z level=INFO msg="Incoming request" status=200 method=GET path=/pong route=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000Z
+// time=2023-10-15T20:32:58.926+02:00 level=INFO msg="Incoming request" env=production request.time=2023-10-15T20:32:58.626+02:00 request.method=GET request.path=/ request.route="" request.ip=127.0.0.1:63932 request.length=0 response.time=2023-10-15T20:32:58.926+02:00 response.latency=100ms response.status=200 response.length=7 id=""
 ```
 
 ### OTEL
@@ -200,7 +200,7 @@ router.GET("/pong", func(c *gin.Context) {
 router.Run(":1234")
 
 // output:
-// time="2023-04-10 14:00:00" level=INFO msg="Incoming request" status=200 method=GET path=/pong route=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time="2023-04-10 14:00:00"
+// time=2023-10-15T20:32:58.926+02:00 level=INFO msg="Incoming request" env=production request.time=2023-10-15T20:32:58Z request.method=GET request.path=/ request.route="" request.ip=127.0.0.1:63932 request.length=0 response.time=2023-10-15T20:32:58Z response.latency=100ms response.status=200 response.length=7 id=""
 ```
 
 ### Using custom logger sub-group
@@ -223,7 +223,7 @@ router.GET("/pong", func(c *gin.Context) {
 router.Run(":1234")
 
 // output:
-// time=2023-04-10T14:00:0.000000+02:00 level=INFO msg="Incoming request" http.status=200 http.method=GET http.path=/pong http.route=/pong http.ip=127.0.0.1 http.latency=20.125µs http.user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000+02:00
+// time=2023-10-15T20:32:58.926+02:00 level=INFO msg="Incoming request" env=production http.request.time=2023-10-15T20:32:58.626+02:00 http.request.method=GET http.request.path=/ http.request.route="" http.request.ip=127.0.0.1:63932 http.request.length=0 http.response.time=2023-10-15T20:32:58.926+02:00 http.response.latency=100ms http.response.status=200 http.response.length=7 http.id=""
 ```
 
 ### Add logger to a single route
@@ -241,9 +241,6 @@ router.GET("/pong", sloggin.New(logger), func(c *gin.Context) {
 })
 
 router.Run(":1234")
-
-// output:
-// time="2023-04-10 14:00:00" level=INFO msg="Incoming request" status=200 method=GET path=/pong route=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time="2023-04-10 14:00:00"
 ```
 
 ### Adding custom attributes
@@ -272,7 +269,7 @@ router.GET("/pong", func(c *gin.Context) {
 router.Run(":1234")
 
 // output:
-// time=2023-04-10T14:00:0.000000+02:00 level=INFO msg="Incoming request" environment=production server=gin/1.9.0 gin_mode=release server_start_time=2023-04-10T10:00:00.000+02:00 status=200 method=GET path=/pong route=/pong ip=127.0.0.1 latency=25.5µs user-agent=curl/7.77.0 time=2023-04-10T14:00:00.000+02:00 foo=bar
+// time=2023-10-15T20:32:58.926+02:00 level=INFO msg="Incoming request" environment=production server=gin/1.9.0 gin_mode=release request.time=2023-10-15T20:32:58.626+02:00 request.method=GET request.path=/ request.route="" request.ip=127.0.0.1:63932 request.length=0 response.time=2023-10-15T20:32:58.926+02:00 response.latency=100ms response.status=200 response.length=7 id="" foo=bar
 ```
 
 ### JSON output
@@ -295,7 +292,7 @@ router.GET("/pong", func(c *gin.Context) {
 router.Run(":1234")
 
 // output:
-// {"time":"2023-04-10T14:00:0.000000+02:00","level":"INFO","msg":"Incoming request","gin_mode":"GIN_MODE","status":200,"method":"GET","path":"/pong","ip":"127.0.0.1","latency":15542,"user-agent":"curl/7.77.0","time":"2023-04-10T14:00:0.000000+02:00"}
+// {"time":"2023-10-15T20:32:58.926+02:00","level":"INFO","msg":"Incoming request","gin_mode":"GIN_MODE","env":"production","http":{"request":{"time":"2023-10-15T20:32:58.626+02:00","method":"GET","path":"/","route":"","ip":"127.0.0.1:55296","length":0},"response":{"time":"2023-10-15T20:32:58.926+02:00","latency":100000,"status":200,"length":7},"id":""}}
 ```
 
 ## 🤝 Contributing
