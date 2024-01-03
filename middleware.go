@@ -102,6 +102,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		path := c.Request.URL.Path
+		query := c.Request.URL.RawQuery
 
 		requestID := uuid.New().String()
 		if config.WithRequestID {
@@ -136,6 +137,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			slog.String("method", method),
 			slog.String("host", host),
 			slog.String("path", path),
+			slog.String("query", query),
 			slog.String("route", route),
 			slog.String("ip", ip),
 			slog.String("referer", referer),
