@@ -23,6 +23,7 @@ func (w bodyWriter) Write(b []byte) (int, error) {
 			w.body.Write(b)
 		}
 	}
+
 	w.bytes += len(b)
 	return w.ResponseWriter.Write(b)
 }
