@@ -292,7 +292,7 @@ router.GET("/pong", func(c *gin.Context) {
 router.Run(":1234")
 
 // output:
-// {"time":"2023-10-15T20:32:58.926+02:00","level":"INFO","msg":"Incoming request","gin_mode":"GIN_MODE","env":"production","http":{"request":{"time":"2023-10-15T20:32:58.626+02:00","method":"GET","path":"/","query"="","route":"","ip":"127.0.0.1:55296","length":0},"response":{"time":"2023-10-15T20:32:58.926+02:00","latency":100000,"status":200,"length":7},"id":""}}
+// {"time":"2023-10-15T20:32:58.926+02:00","level":"INFO","msg":"Incoming request","gin_mode":"GIN_MODE","env":"production","http":{"request":{"time":"2023-10-15T20:32:58.626+02:00","method":"GET","path":"/","query":"","route":"","ip":"127.0.0.1:55296","length":0},"response":{"time":"2023-10-15T20:32:58.926+02:00","latency":100000,"status":200,"length":7},"id":""}}
 ```
 
 ## 🤝 Contributing
