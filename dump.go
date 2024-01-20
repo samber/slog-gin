@@ -3,9 +3,14 @@ package sloggin
 import (
 	"bytes"
 	"io"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+var _ http.ResponseWriter = (*bodyWriter)(nil)
+var _ http.Flusher = (*bodyWriter)(nil)
+var _ http.Hijacker = (*bodyWriter)(nil)
 
 type bodyWriter struct {
 	gin.ResponseWriter
