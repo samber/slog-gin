@@ -61,7 +61,7 @@ func (r *bodyReader) Read(b []byte) (int, error) {
 		if r.body.Len()+n > r.maxSize {
 			r.body.Write(b[:r.maxSize-r.body.Len()])
 		} else {
-			r.body.Write(b)
+			r.body.Write(b[:n])
 		}
 	}
 	r.bytes += n
