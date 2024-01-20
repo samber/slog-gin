@@ -29,7 +29,7 @@ func (w bodyWriter) Write(b []byte) (int, error) {
 		}
 	}
 
-	w.bytes += len(b)
+	w.bytes += len(b) //nolint:staticcheck
 	return w.ResponseWriter.Write(b)
 }
 
@@ -43,6 +43,7 @@ func newBodyWriter(writer gin.ResponseWriter, maxSize int, recordBody bool) *bod
 		ResponseWriter: writer,
 		body:           body,
 		maxSize:        maxSize,
+		bytes:          0,
 	}
 }
 
@@ -77,5 +78,6 @@ func newBodyReader(reader io.ReadCloser, maxSize int, recordBody bool) *bodyRead
 		ReadCloser: reader,
 		body:       body,
 		maxSize:    maxSize,
+		bytes:      0,
 	}
 }
