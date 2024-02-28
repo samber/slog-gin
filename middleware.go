@@ -15,6 +15,8 @@ import (
 const (
 	customAttributesCtxKey = "slog-gin.custom-attributes"
 	requestIDCtx           = "slog-gin.request-id"
+	// Formatted with http.CanonicalHeaderKey
+	requestIDHeaderKey = "X-Request-Id"
 )
 
 var (
@@ -109,10 +111,13 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			params[p.Key] = p.Value
 		}
 
-		requestID := uuid.New().String()
+		requestID := c.GetHeader(requestIDHeaderKey)
 		if config.WithRequestID {
+			if requestID == "" {
+				requestID = uuid.New().String()
+				c.Header(requestIDHeaderKey, requestID)
+			}
 			c.Set(requestIDCtx, requestID)
-			c.Header("X-Request-ID", requestID)
 		}
 
 		// dump request body
