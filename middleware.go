@@ -15,8 +15,6 @@ import (
 const (
 	customAttributesCtxKey = "slog-gin.custom-attributes"
 	requestIDCtx           = "slog-gin.request-id"
-	// Formatted with http.CanonicalHeaderKey
-	requestIDHeaderKey = "X-Request-Id"
 )
 
 var (
@@ -34,6 +32,9 @@ var (
 	HiddenResponseHeaders = map[string]struct{}{
 		"set-cookie": {},
 	}
+
+	// Formatted with http.CanonicalHeaderKey
+	RequestIDHeaderKey = "X-Request-Id"
 )
 
 type Config struct {
