@@ -112,11 +112,11 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			params[p.Key] = p.Value
 		}
 
-		requestID := c.GetHeader(requestIDHeaderKey)
+		requestID := c.GetHeader(RequestIDHeaderKey)
 		if config.WithRequestID {
 			if requestID == "" {
 				requestID = uuid.New().String()
-				c.Header(requestIDHeaderKey, requestID)
+				c.Header(RequestIDHeaderKey, requestID)
 			}
 			c.Set(requestIDCtx, requestID)
 		}
