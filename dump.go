@@ -20,7 +20,7 @@ type bodyWriter struct {
 }
 
 // implements gin.ResponseWriter
-func (w bodyWriter) Write(b []byte) (int, error) {
+func (w *bodyWriter) Write(b []byte) (int, error) {
 	if w.body != nil {
 		if w.body.Len()+len(b) > w.maxSize {
 			w.body.Write(b[:w.maxSize-w.body.Len()])
