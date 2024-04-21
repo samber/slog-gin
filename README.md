@@ -65,6 +65,41 @@ No breaking changes will be made to exported APIs before v2.0.0.
 
 ## 💡 Usage
 
+### Handler options
+
+```go
+type Config struct {
+	DefaultLevel     slog.Level
+	ClientErrorLevel slog.Level
+	ServerErrorLevel slog.Level
+
+	WithUserAgent      bool
+	WithRequestID      bool
+	WithRequestBody    bool
+	WithRequestHeader  bool
+	WithResponseBody   bool
+	WithResponseHeader bool
+	WithSpanID         bool
+	WithTraceID        bool
+
+	Filters []Filter
+}
+```
+
+Attributes will be injected in log payload.
+
+Other global parameters:
+
+```go
+sloggin.TraceIDKey = "trace-id"
+sloggin.SpanIDKey = "span-id"
+sloggin.RequestBodyMaxSize  = 64 * 1024 // 64KB
+sloggin.ResponseBodyMaxSize = 64 * 1024 // 64KB
+sloggin.HiddenRequestHeaders = map[string]struct{}{ ... }
+sloggin.HiddenResponseHeaders = map[string]struct{}{ ... }
+sloggin.RequestIDHeaderKey = "X-Request-Id"
+```
+
 ### Minimal
 
 ```go

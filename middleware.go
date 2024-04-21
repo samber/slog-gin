@@ -17,6 +17,9 @@ const (
 )
 
 var (
+	TraceIDKey = "trace-id"
+	SpanIDKey  = "span-id"
+
 	RequestBodyMaxSize  = 64 * 1024 // 64KB
 	ResponseBodyMaxSize = 64 * 1024 // 64KB
 
@@ -295,12 +298,12 @@ func extractTraceSpanID(c *gin.Context, config Config, baseAttributes []slog.Att
 
 	if config.WithTraceID && spanCtx.HasTraceID() {
 		traceID := trace.SpanFromContext(ctx).SpanContext().TraceID().String()
-		baseAttributes = append(baseAttributes, slog.String("trace-id", traceID))
+		baseAttributes = append(baseAttributes, slog.String(TraceIDKey, traceID))
 	}
 
 	if config.WithSpanID && spanCtx.HasSpanID() {
 		spanID := spanCtx.SpanID().String()
-		baseAttributes = append(baseAttributes, slog.String("span-id", spanID))
+		baseAttributes = append(baseAttributes, slog.String(SpanIDKey, spanID))
 	}
 
 	return baseAttributes
