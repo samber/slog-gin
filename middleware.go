@@ -168,7 +168,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		}
 
 		// otel
-		baseAttributes = extractTraceSpanID(c, config, baseAttributes)
+		baseAttributes = append(baseAttributes, extractTraceSpanID(c, config.WithTraceID, config.WithSpanID)...)
 
 		// request body
 		requestAttributes = append(requestAttributes, slog.Int("length", br.bytes))
@@ -283,28 +283,29 @@ func AddCustomAttributes(c *gin.Context, attr slog.Attr) {
 	}
 }
 
-func extractTraceSpanID(c *gin.Context, config Config, baseAttributes []slog.Attr) []slog.Attr {
-	if !(config.WithTraceID || config.WithSpanID) {
-		return baseAttributes
+func extractTraceSpanID(c *gin.Context, withTraceID bool, withSpanID bool) []slog.Attr {
+	if !(withTraceID || withSpanID) {
+		return []slog.Attr{}
 	}
 
 	ctx := c.Request.Context()
 	span := trace.SpanFromContext(ctx)
 	if !span.IsRecording() {
-		return baseAttributes
+		return []slog.Attr{}
 	}
 
+	attrs := []slog.Attr{}
 	spanCtx := span.SpanContext()
 
-	if config.WithTraceID && spanCtx.HasTraceID() {
+	if withTraceID && spanCtx.HasTraceID() {
 		traceID := trace.SpanFromContext(ctx).SpanContext().TraceID().String()
-		baseAttributes = append(baseAttributes, slog.String(TraceIDKey, traceID))
+		attrs = append(attrs, slog.String(TraceIDKey, traceID))
 	}
 
-	if config.WithSpanID && spanCtx.HasSpanID() {
+	if withSpanID && spanCtx.HasSpanID() {
 		spanID := spanCtx.SpanID().String()
-		baseAttributes = append(baseAttributes, slog.String(SpanIDKey, spanID))
+		attrs = append(attrs, slog.String(SpanIDKey, spanID))
 	}
 
-	return baseAttributes
+	return attrs
 }
