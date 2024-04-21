@@ -1,6 +1,7 @@
 package sloggin
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -168,7 +169,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		}
 
 		// otel
-		baseAttributes = append(baseAttributes, extractTraceSpanID(c, config.WithTraceID, config.WithSpanID)...)
+		baseAttributes = append(baseAttributes, extractTraceSpanID(c.Request.Context(), config.WithTraceID, config.WithSpanID)...)
 
 		// request body
 		requestAttributes = append(requestAttributes, slog.Int("length", br.bytes))
@@ -283,12 +284,11 @@ func AddCustomAttributes(c *gin.Context, attr slog.Attr) {
 	}
 }
 
-func extractTraceSpanID(c *gin.Context, withTraceID bool, withSpanID bool) []slog.Attr {
+func extractTraceSpanID(ctx context.Context, withTraceID bool, withSpanID bool) []slog.Attr {
 	if !(withTraceID || withSpanID) {
 		return []slog.Attr{}
 	}
 
-	ctx := c.Request.Context()
 	span := trace.SpanFromContext(ctx)
 	if !span.IsRecording() {
 		return []slog.Attr{}
