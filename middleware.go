@@ -1,11 +1,10 @@
 package sloggin
 
 import (
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
-
-	"log/slog"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -169,14 +168,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		}
 
 		// otel
-		if config.WithTraceID {
-			traceID := trace.SpanFromContext(c.Request.Context()).SpanContext().TraceID().String()
-			baseAttributes = append(baseAttributes, slog.String(TraceIDKey, traceID))
-		}
-		if config.WithSpanID {
-			spanID := trace.SpanFromContext(c.Request.Context()).SpanContext().SpanID().String()
-			baseAttributes = append(baseAttributes, slog.String(SpanIDKey, spanID))
-		}
+		baseAttributes = extractTraceSpanID(c, config, baseAttributes)
 
 		// request body
 		requestAttributes = append(requestAttributes, slog.Int("length", br.bytes))
@@ -289,4 +281,30 @@ func AddCustomAttributes(c *gin.Context, attr slog.Attr) {
 	case []slog.Attr:
 		c.Set(customAttributesCtxKey, append(attrs, attr))
 	}
+}
+
+func extractTraceSpanID(c *gin.Context, config Config, baseAttributes []slog.Attr) []slog.Attr {
+	if !(config.WithTraceID || config.WithSpanID) {
+		return baseAttributes
+	}
+
+	ctx := c.Request.Context()
+	span := trace.SpanFromContext(ctx)
+	if !span.IsRecording() {
+		return baseAttributes
+	}
+
+	spanCtx := span.SpanContext()
+
+	if config.WithTraceID && spanCtx.HasTraceID() {
+		traceID := trace.SpanFromContext(ctx).SpanContext().TraceID().String()
+		baseAttributes = append(baseAttributes, slog.String(TraceIDKey, traceID))
+	}
+
+	if config.WithSpanID && spanCtx.HasSpanID() {
+		spanID := spanCtx.SpanID().String()
+		baseAttributes = append(baseAttributes, slog.String(SpanIDKey, spanID))
+	}
+
+	return baseAttributes
 }
