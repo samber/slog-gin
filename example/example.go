@@ -1,18 +1,52 @@
 package main
 
 import (
+	"context"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
-	"log/slog"
-
 	"github.com/gin-gonic/gin"
 	slogformatter "github.com/samber/slog-formatter"
 	sloggin "github.com/samber/slog-gin"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
+func initTracerProvider() (*sdktrace.TracerProvider, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	resource, err := resource.New(ctx, resource.WithAttributes(
+		attribute.String("service.name", "example"),
+		attribute.String("service.namespace", "default"),
+	))
+	if err != nil {
+		return nil, err
+	}
+
+	// tracer provider
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
+		sdktrace.WithResource(resource),
+	)
+	otel.SetTracerProvider(tp)
+
+	// Set up a text map propagator
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+
+	return tp, nil
+}
+
 func main() {
+	tp, _ := initTracerProvider()
+	defer tp.Shutdown(context.Background())
+
 	// Create a slog logger, which:
 	//   - Logs to stdout.
 	//   - RFC3339 with UTC time format.
@@ -29,12 +63,18 @@ func main() {
 	logger = logger.With("gin_mode", gin.EnvGinMode)
 
 	router := gin.New()
+	router.Use(otelgin.Middleware("example"))
 
 	// Add the sloggin middleware to all routes.
 	// The middleware will log all requests attributes under a "http" group.
-	router.Use(sloggin.New(logger))
-	// config := sloggin.Config{WithRequestBody: true, WithResponseBody: true, WithRequestHeader: true, WithResponseHeader: true}
-	// router.Use(sloggin.NewWithConfig(logger, config))
+	//router.Use(sloggin.New(logger))
+	config := sloggin.Config{
+		WithRequestID: true,
+		WithSpanID:    true,
+		WithTraceID:   true,
+	}
+	router.Use(sloggin.NewWithConfig(logger, config))
+
 	router.Use(gin.Recovery())
 
 	// Example pong request.
