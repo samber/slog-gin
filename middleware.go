@@ -18,8 +18,8 @@ const (
 )
 
 var (
-	TraceIDKey   = "trace-id"
-	SpanIDKey    = "span-id"
+	TraceIDKey   = "trace_id"
+	SpanIDKey    = "span_id"
 	RequestIDKey = "id"
 
 	RequestBodyMaxSize  = 64 * 1024 // 64KB
@@ -258,7 +258,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 	}
 }
 
-// GetRequestID returns the request identifier
+// GetRequestID returns the request identifier.
 func GetRequestID(c *gin.Context) string {
 	requestID, ok := c.Get(requestIDCtx)
 	if !ok {
@@ -272,6 +272,7 @@ func GetRequestID(c *gin.Context) string {
 	return ""
 }
 
+// AddCustomAttributes adds custom attributes to the request context.
 func AddCustomAttributes(c *gin.Context, attr slog.Attr) {
 	v, exists := c.Get(customAttributesCtxKey)
 	if !exists {
