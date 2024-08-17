@@ -36,5 +36,6 @@ require (
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
+	go.opentelemetry.io/otel/trace v1.28.0
 	go.uber.org/goleak v1.2.1
 )
