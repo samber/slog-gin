@@ -23,7 +23,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
-	go.opentelemetry.io/otel v1.28.0 // indirect
+	go.opentelemetry.io/otel v1.29.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
@@ -36,6 +36,6 @@ require (
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
-	go.opentelemetry.io/otel/trace v1.28.0
-	go.uber.org/goleak v1.2.1
+	go.opentelemetry.io/otel/trace v1.29.0
+	go.uber.org/goleak v1.3.0
 )
