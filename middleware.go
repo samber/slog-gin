@@ -135,6 +135,13 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 
 		c.Next()
 
+		// Pass thru filters and skip early the code below, to prevent unnecessary processing.
+		for _, filter := range config.Filters {
+			if !filter(c) {
+				return
+			}
+		}
+
 		status := c.Writer.Status()
 		method := c.Request.Method
 		host := c.Request.Host
@@ -235,12 +242,6 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			switch attrs := v.(type) {
 			case []slog.Attr:
 				attributes = append(attributes, attrs...)
-			}
-		}
-
-		for _, filter := range config.Filters {
-			if !filter(c) {
-				return
 			}
 		}
 
