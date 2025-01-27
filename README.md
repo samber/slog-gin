@@ -214,8 +214,10 @@ Available filters:
 - Accept / Ignore
 - AcceptMethod / IgnoreMethod
 - AcceptStatus / IgnoreStatus
-- AcceptStatusGreaterThan / IgnoreStatusLessThan
-- AcceptStatusGreaterThanOrEqual / IgnoreStatusLessThanOrEqual
+- AcceptStatusGreaterThan / IgnoreStatusGreaterThan
+- AcceptStatusLessThan / IgnoreStatusLessThan
+- AcceptStatusGreaterThanOrEqual / IgnoreStatusGreaterThanOrEqual
+- AcceptStatusLessThanOrEqual / IgnoreStatusLessThanOrEqual
 - AcceptPath / IgnorePath
 - AcceptPathContains / IgnorePathContains
 - AcceptPathPrefix / IgnorePathPrefix
