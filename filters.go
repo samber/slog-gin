@@ -73,22 +73,38 @@ func AcceptStatusGreaterThan(status int) Filter {
 	}
 }
 
-func IgnoreStatusLessThan(status int) Filter {
-	return func(c *gin.Context) bool {
-		return c.Writer.Status() < status
-	}
-}
-
 func AcceptStatusGreaterThanOrEqual(status int) Filter {
 	return func(c *gin.Context) bool {
 		return c.Writer.Status() >= status
 	}
 }
 
-func IgnoreStatusLessThanOrEqual(status int) Filter {
+func AcceptStatusLessThan(status int) Filter {
+	return func(c *gin.Context) bool {
+		return c.Writer.Status() < status
+	}
+}
+
+func AcceptStatusLessThanOrEqual(status int) Filter {
 	return func(c *gin.Context) bool {
 		return c.Writer.Status() <= status
 	}
+}
+
+func IgnoreStatusGreaterThan(status int) Filter {
+	return AcceptStatusLessThanOrEqual(int)
+}
+
+func IgnoreStatusGreaterThanOrEqual(status int) Filter {
+	return AcceptStatusLessThan(int)
+}
+
+func IgnoreStatusLessThan(status int) Filter {
+	return AcceptStatusGreaterThanOrEqual(int)
+}
+
+func IgnoreStatusLessThanOrEqual(status int) Filter {
+	return AcceptStatusGreaterThan(int)
 }
 
 // Path
