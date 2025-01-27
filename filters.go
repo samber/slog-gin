@@ -92,19 +92,19 @@ func AcceptStatusLessThanOrEqual(status int) Filter {
 }
 
 func IgnoreStatusGreaterThan(status int) Filter {
-	return AcceptStatusLessThanOrEqual(int)
+	return AcceptStatusLessThanOrEqual(status)
 }
 
 func IgnoreStatusGreaterThanOrEqual(status int) Filter {
-	return AcceptStatusLessThan(int)
+	return AcceptStatusLessThan(status)
 }
 
 func IgnoreStatusLessThan(status int) Filter {
-	return AcceptStatusGreaterThanOrEqual(int)
+	return AcceptStatusGreaterThanOrEqual(status)
 }
 
 func IgnoreStatusLessThanOrEqual(status int) Filter {
-	return AcceptStatusGreaterThan(int)
+	return AcceptStatusGreaterThan(status)
 }
 
 // Path
