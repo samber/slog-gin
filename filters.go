@@ -11,7 +11,7 @@ type Filter func(ctx *gin.Context) bool
 
 // Basic
 func Accept(filter Filter) Filter { return filter }
-func Ignore(filter Filter) Filter { return filter }
+func Ignore(filter Filter) Filter { return func(ctx *gin.Context) bool { return !filter(ctx) } }
 
 // Method
 func AcceptMethod(methods ...string) Filter {
