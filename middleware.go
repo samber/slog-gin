@@ -2,6 +2,7 @@ package sloggin
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -250,9 +251,15 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		if status >= http.StatusBadRequest && status < http.StatusInternalServerError {
 			level = config.ClientErrorLevel
 			msg = c.Errors.String()
+			if msg == "" {
+				msg = fmt.Sprintf("HTTP error: %d %s", status, strings.ToLower(http.StatusText(status)))
+			}
 		} else if status >= http.StatusInternalServerError {
 			level = config.ServerErrorLevel
 			msg = c.Errors.String()
+			if msg == "" {
+				msg = fmt.Sprintf("HTTP error: %d %s", status, strings.ToLower(http.StatusText(status)))
+			}
 		}
 
 		logger.LogAttrs(c.Request.Context(), level, msg, attributes...)
