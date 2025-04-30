@@ -83,7 +83,8 @@ func main() {
 		c.String(http.StatusOK, "pong")
 	})
 	router.GET("/pong/:id", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
+		id := c.Param("id")
+		c.String(http.StatusOK, "pong %s", id)
 	})
 
 	logger.Info("Starting server")
