@@ -250,13 +250,13 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		msg := "Incoming request"
 		if status >= http.StatusBadRequest && status < http.StatusInternalServerError {
 			level = config.ClientErrorLevel
-			msg = c.Errors.String()
+			msg = strings.TrimSuffix(c.Errors.String(), "\n")
 			if msg == "" {
 				msg = fmt.Sprintf("HTTP error: %d %s", status, strings.ToLower(http.StatusText(status)))
 			}
 		} else if status >= http.StatusInternalServerError {
 			level = config.ServerErrorLevel
-			msg = c.Errors.String()
+			msg = strings.TrimSuffix(c.Errors.String(), "\n")
 			if msg == "" {
 				msg = fmt.Sprintf("HTTP error: %d %s", status, strings.ToLower(http.StatusText(status)))
 			}
