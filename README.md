@@ -115,6 +115,7 @@ sloggin.ResponseBodyMaxSize = 64 * 1024 // 64KB
 sloggin.HiddenRequestHeaders = map[string]struct{}{ ... }
 sloggin.HiddenResponseHeaders = map[string]struct{}{ ... }
 sloggin.RequestIDHeaderKey = "X-Request-Id"
+sloggin.RequestIDContextKey = "slog-gin.request-id"
 ```
 
 ### Minimal

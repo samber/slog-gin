@@ -15,7 +15,6 @@ import (
 
 const (
 	customAttributesCtxKey = "slog-gin.custom-attributes"
-	requestIDCtx           = "slog-gin.request-id"
 )
 
 var (
@@ -39,7 +38,8 @@ var (
 	}
 
 	// Formatted with http.CanonicalHeaderKey
-	RequestIDHeaderKey = "X-Request-Id"
+	RequestIDHeaderKey  = "X-Request-Id"
+	RequestIDContextKey = "slog-gin.request-id"
 )
 
 type Config struct {
@@ -123,7 +123,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 				requestID = uuid.New().String()
 				c.Header(RequestIDHeaderKey, requestID)
 			}
-			c.Set(requestIDCtx, requestID)
+			c.Set(RequestIDContextKey, requestID)
 		}
 
 		// dump request body
@@ -268,7 +268,7 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 
 // GetRequestID returns the request identifier.
 func GetRequestID(c *gin.Context) string {
-	requestID, ok := c.Get(requestIDCtx)
+	requestID, ok := c.Get(RequestIDContextKey)
 	if !ok {
 		return ""
 	}
