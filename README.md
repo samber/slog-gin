@@ -99,6 +99,8 @@ type Config struct {
 	WithSpanID         bool
 	WithTraceID        bool
 
+	HandleGinDebug bool
+
 	Filters []Filter
 }
 ```

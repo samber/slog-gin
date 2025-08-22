@@ -56,6 +56,8 @@ type Config struct {
 	WithSpanID         bool
 	WithTraceID        bool
 
+	HandleGinDebug bool
+
 	Filters []Filter
 }
 
@@ -77,6 +79,8 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 		WithResponseHeader: false,
 		WithSpanID:         false,
 		WithTraceID:        false,
+
+		HandleGinDebug: false,
 
 		Filters: []Filter{},
 	})
@@ -101,12 +105,19 @@ func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
 		WithSpanID:         false,
 		WithTraceID:        false,
 
+		HandleGinDebug: false,
+
 		Filters: filters,
 	})
 }
 
 // NewWithConfig returns a gin.HandlerFunc (middleware) that logs requests using slog.
 func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
+	if config.HandleGinDebug {
+		SetDebugPrintRouteFunc(logger)
+		SetDebugPrintFunc(logger)
+	}
+
 	return func(c *gin.Context) {
 		start := time.Now()
 		path := c.Request.URL.Path
