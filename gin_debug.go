@@ -1,7 +1,9 @@
 package sloggin
 
 import (
+	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,7 +14,12 @@ import (
 func SetDebugPrintRouteFunc(logger *slog.Logger, customFunc ...func(httpMethod string, absolutePath string, handlerName string, nuHandlers int)) {
 	if len(customFunc) == 0 {
 		gin.DebugPrintRouteFunc = func(httpMethod string, absolutePath string, handlerName string, nuHandlers int) {
-			logger.Debug("Route registered", "method", httpMethod, "path", absolutePath, "handler", handlerName, "num_handlers", nuHandlers)
+			logger.Debug("Route registered",
+				slog.String("method", httpMethod),
+				slog.String("path", absolutePath),
+				slog.String("handler", handlerName),
+				slog.Int("num_handlers", nuHandlers))
+
 		}
 	} else {
 		gin.DebugPrintRouteFunc = customFunc[0]
@@ -25,7 +32,8 @@ func SetDebugPrintRouteFunc(logger *slog.Logger, customFunc ...func(httpMethod s
 func SetDebugPrintFunc(logger *slog.Logger, customFunc ...func(format string, values ...any)) {
 	if len(customFunc) == 0 {
 		gin.DebugPrintFunc = func(format string, values ...any) {
-			logger.Debug("[GIN-debug] "+format, values...)
+			format = strings.TrimRight(format, "\n")
+			logger.Debug(fmt.Sprintf("[GIN-debug] "+format, values...))
 		}
 	} else {
 		gin.DebugPrintFunc = customFunc[0]

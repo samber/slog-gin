@@ -1,12 +1,13 @@
 module example
 
-go 1.21
+go 1.23.0
+
 toolchain go1.24.1
 
 replace github.com/samber/slog-gin => ../
 
 require (
-	github.com/gin-gonic/gin v1.10.0
+	github.com/gin-gonic/gin v1.10.1
 	github.com/samber/slog-formatter v1.0.1
 	github.com/samber/slog-gin v1.13.3
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.53.0

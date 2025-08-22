@@ -55,7 +55,7 @@ func main() {
 			slogformatter.TimezoneConverter(time.UTC),
 			slogformatter.TimeFormatter(time.RFC3339, nil),
 		)(
-			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}),
+			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 		),
 	)
 
@@ -69,9 +69,10 @@ func main() {
 	// The middleware will log all requests attributes under a "http" group.
 	//router.Use(sloggin.New(logger))
 	config := sloggin.Config{
-		WithRequestID: true,
-		WithSpanID:    true,
-		WithTraceID:   true,
+		WithRequestID:  true,
+		WithSpanID:     true,
+		WithTraceID:    true,
+		HandleGinDebug: true,
 	}
 	router.Use(sloggin.NewWithConfig(logger, config))
 
