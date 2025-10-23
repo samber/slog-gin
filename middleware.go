@@ -292,16 +292,16 @@ func GetRequestID(c *gin.Context) string {
 }
 
 // AddCustomAttributes adds custom attributes to the request context.
-func AddCustomAttributes(c *gin.Context, attr slog.Attr) {
+func AddCustomAttributes(c *gin.Context, attrs ...slog.Attr) {
 	v, exists := c.Get(customAttributesCtxKey)
 	if !exists {
-		c.Set(customAttributesCtxKey, []slog.Attr{attr})
+		c.Set(customAttributesCtxKey, attrs)
 		return
 	}
 
-	switch attrs := v.(type) {
+	switch vAttrs := v.(type) {
 	case []slog.Attr:
-		c.Set(customAttributesCtxKey, append(attrs, attr))
+		c.Set(customAttributesCtxKey, append(vAttrs, attrs...))
 	}
 }
 
