@@ -55,6 +55,7 @@ type Config struct {
 	WithResponseHeader bool
 	WithSpanID         bool
 	WithTraceID        bool
+	WithClientIP       bool
 
 	HandleGinDebug bool
 
@@ -66,24 +67,7 @@ type Config struct {
 // Requests with errors are logged using slog.Error().
 // Requests without errors are logged using slog.Info().
 func New(logger *slog.Logger) gin.HandlerFunc {
-	return NewWithConfig(logger, Config{
-		DefaultLevel:     slog.LevelInfo,
-		ClientErrorLevel: slog.LevelWarn,
-		ServerErrorLevel: slog.LevelError,
-
-		WithUserAgent:      false,
-		WithRequestID:      true,
-		WithRequestBody:    false,
-		WithRequestHeader:  false,
-		WithResponseBody:   false,
-		WithResponseHeader: false,
-		WithSpanID:         false,
-		WithTraceID:        false,
-
-		HandleGinDebug: false,
-
-		Filters: []Filter{},
-	})
+	return NewWithConfig(logger, Config{})
 }
 
 // NewWithFilters returns a gin.HandlerFunc (middleware) that logs requests using slog.
@@ -91,8 +75,15 @@ func New(logger *slog.Logger) gin.HandlerFunc {
 // Requests with errors are logged using slog.Error().
 // Requests without errors are logged using slog.Info().
 func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
-	return NewWithConfig(logger, Config{
-		DefaultLevel:     slog.LevelInfo,
+	config := DefaultConfig()
+	config.Filters = filters
+	return NewWithConfig(logger, config)
+}
+
+// DefaultConfig returns the default configuration for the request logger.
+func DefaultConfig() Config {
+	return Config{
+				DefaultLevel:     slog.LevelInfo,
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
@@ -104,11 +95,12 @@ func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
 		WithResponseHeader: false,
 		WithSpanID:         false,
 		WithTraceID:        false,
+		WithClientIP:       true,
 
 		HandleGinDebug: false,
 
-		Filters: filters,
-	})
+		Filters: []Filter{},
+	}
 }
 
 // NewWithConfig returns a gin.HandlerFunc (middleware) that logs requests using slog.
@@ -164,9 +156,11 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		ip := c.ClientIP()
 		referer := c.Request.Referer()
 
-		baseAttributes := []slog.Attr{}
+		baseAttributes := make([]slog.Attr, 0, 3)
+		requestAttributes := make([]slog.Attr, 0, 13)
+		responseAttributes := make([]slog.Attr, 0, 6)
 
-		requestAttributes := []slog.Attr{
+		requestAttributes = append(requestAttributes,
 			slog.Time("time", start.UTC()),
 			slog.String("method", method),
 			slog.String("host", host),
@@ -174,15 +168,20 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 			slog.String("query", query),
 			slog.Any("params", params),
 			slog.String("route", route),
-			slog.String("ip", ip),
 			slog.String("referer", referer),
+		)
+
+		if config.WithClientIP {
+			requestAttributes = append(requestAttributes,
+				slog.String("ip", ip),
+			)
 		}
 
-		responseAttributes := []slog.Attr{
+		responseAttributes = append(responseAttributes,
 			slog.Time("time", end.UTC()),
 			slog.Duration("latency", latency),
 			slog.Int("status", status),
-		}
+		)
 
 		if config.WithRequestID {
 			baseAttributes = append(baseAttributes, slog.String(RequestIDKey, requestID))
@@ -315,7 +314,7 @@ func extractTraceSpanID(ctx context.Context, withTraceID bool, withSpanID bool) 
 		return []slog.Attr{}
 	}
 
-	attrs := []slog.Attr{}
+	attrs := make([]slog.Attr, 0, 2)
 	spanCtx := span.SpanContext()
 
 	if withTraceID && spanCtx.HasTraceID() {
