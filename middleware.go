@@ -67,7 +67,7 @@ type Config struct {
 // Requests with errors are logged using slog.Error().
 // Requests without errors are logged using slog.Info().
 func New(logger *slog.Logger) gin.HandlerFunc {
-	return NewWithConfig(logger, Config{})
+	return NewWithConfig(logger, DefaultConfig())
 }
 
 // NewWithFilters returns a gin.HandlerFunc (middleware) that logs requests using slog.
