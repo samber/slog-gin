@@ -2,6 +2,7 @@ package sloggin
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"net/http"
 
@@ -12,6 +13,8 @@ var _ http.ResponseWriter = (*bodyWriter)(nil)
 var _ http.Flusher = (*bodyWriter)(nil)
 var _ http.Hijacker = (*bodyWriter)(nil)
 var _ io.ReaderFrom = (*bodyWriter)(nil)
+
+var errInvalidWrite = errors.New("invalid write result")
 
 type bodyWriter struct {
 	gin.ResponseWriter
@@ -46,7 +49,54 @@ func (w *bodyWriter) ReadFrom(r io.Reader) (int64, error) {
 			return n, err
 		}
 	}
-	return io.Copy(w, r)
+	// inline io.Copy(w, r) without ReaderFrom interface usage
+	if wt, ok := r.(io.WriterTo); ok {
+		return wt.WriteTo(w)
+	}
+
+	size := 32 * 1024
+	if l, ok := r.(*io.LimitedReader); ok && int64(size) > l.N {
+		if l.N < 1 {
+			size = 1
+		} else {
+			size = int(l.N)
+		}
+	}
+	buf := make([]byte, size)
+
+	var (
+		written int64
+		err     error
+	)
+	for {
+		nr, er := r.Read(buf)
+		if nr > 0 {
+			nw, ew := w.Write(buf[0:nr])
+			if nw < 0 || nr < nw {
+				nw = 0
+				if ew == nil {
+					ew = errInvalidWrite
+				}
+			}
+			written += int64(nw)
+			if ew != nil {
+				err = ew
+				break
+			}
+			if nr != nw {
+				err = io.ErrShortWrite
+				break
+			}
+		}
+		if er != nil {
+			if er != io.EOF {
+				err = er
+			}
+			break
+		}
+	}
+
+	return written, err
 }
 
 func newBodyWriter(writer gin.ResponseWriter, maxSize int, recordBody bool) *bodyWriter {
