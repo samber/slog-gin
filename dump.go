@@ -2,7 +2,6 @@ package sloggin
 
 import (
 	"bytes"
-	"errors"
 	"io"
 	"net/http"
 
