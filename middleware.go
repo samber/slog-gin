@@ -56,6 +56,7 @@ type Config struct {
 	WithSpanID         bool
 	WithTraceID        bool
 	WithClientIP       bool
+	WithCustomMessage  func(c *gin.Context) string
 
 	HandleGinDebug bool
 
@@ -83,7 +84,7 @@ func NewWithFilters(logger *slog.Logger, filters ...Filter) gin.HandlerFunc {
 // DefaultConfig returns the default configuration for the request logger.
 func DefaultConfig() Config {
 	return Config{
-				DefaultLevel:     slog.LevelInfo,
+		DefaultLevel:     slog.LevelInfo,
 		ClientErrorLevel: slog.LevelWarn,
 		ServerErrorLevel: slog.LevelError,
 
@@ -257,18 +258,26 @@ func NewWithConfig(logger *slog.Logger, config Config) gin.HandlerFunc {
 		}
 
 		level := config.DefaultLevel
-		msg := "Incoming request"
 		if status >= http.StatusBadRequest && status < http.StatusInternalServerError {
 			level = config.ClientErrorLevel
-			msg = strings.TrimSuffix(c.Errors.String(), "\n")
-			if msg == "" {
-				msg = fmt.Sprintf("HTTP error: %d %s", status, strings.ToLower(http.StatusText(status)))
-			}
 		} else if status >= http.StatusInternalServerError {
 			level = config.ServerErrorLevel
-			msg = strings.TrimSuffix(c.Errors.String(), "\n")
-			if msg == "" {
-				msg = fmt.Sprintf("HTTP error: %d %s", status, strings.ToLower(http.StatusText(status)))
+		}
+
+		msg := "Incoming request"
+		if config.WithCustomMessage != nil {
+			msg = config.WithCustomMessage(c)
+		} else {
+			if status >= http.StatusBadRequest && status < http.StatusInternalServerError {
+				msg = strings.TrimSuffix(c.Errors.String(), "\n")
+				if msg == "" {
+					msg = fmt.Sprintf("HTTP error: %d %s", status, strings.ToLower(http.StatusText(status)))
+				}
+			} else if status >= http.StatusInternalServerError {
+				msg = strings.TrimSuffix(c.Errors.String(), "\n")
+				if msg == "" {
+					msg = fmt.Sprintf("HTTP error: %d %s", status, strings.ToLower(http.StatusText(status)))
+				}
 			}
 		}
 
