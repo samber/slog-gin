@@ -108,6 +108,7 @@ type Config struct {
 	WithSpanID         bool
 	WithTraceID        bool
 	WithClientIP       bool
+	WithCustomMessage  func(c *gin.Context) string
 
 	HandleGinDebug bool
 
