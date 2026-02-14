@@ -97,6 +97,7 @@ func DefaultConfig() Config {
 		WithSpanID:         false,
 		WithTraceID:        false,
 		WithClientIP:       true,
+		WithCustomMessage:  nil,
 
 		HandleGinDebug: false,
 
