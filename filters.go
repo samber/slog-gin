@@ -16,30 +16,22 @@ func Ignore(filter Filter) Filter { return func(ctx *gin.Context) bool { return 
 
 // Method
 func AcceptMethod(methods ...string) Filter {
+	for i := range methods {
+		methods[i] = strings.ToLower(methods[i])
+	}
+
 	return func(c *gin.Context) bool {
-		reqMethod := strings.ToLower(c.Request.Method)
-
-		for _, method := range methods {
-			if strings.ToLower(method) == reqMethod {
-				return true
-			}
-		}
-
-		return false
+		return slices.Contains(methods, strings.ToLower(c.Request.Method))
 	}
 }
 
 func IgnoreMethod(methods ...string) Filter {
+	for i := range methods {
+		methods[i] = strings.ToLower(methods[i])
+	}
+
 	return func(c *gin.Context) bool {
-		reqMethod := strings.ToLower(c.Request.Method)
-
-		for _, method := range methods {
-			if strings.ToLower(method) == reqMethod {
-				return false
-			}
-		}
-
-		return true
+		return !slices.Contains(methods, strings.ToLower(c.Request.Method))
 	}
 }
 
@@ -157,10 +149,10 @@ func IgnorePathPrefix(prefixs ...string) Filter {
 	}
 }
 
-func AcceptPathSuffix(prefixs ...string) Filter {
+func AcceptPathSuffix(suffixs ...string) Filter {
 	return func(c *gin.Context) bool {
-		for _, prefix := range prefixs {
-			if strings.HasPrefix(c.Request.URL.Path, prefix) {
+		for _, suffix := range suffixs {
+			if strings.HasSuffix(c.Request.URL.Path, suffix) {
 				return true
 			}
 		}
@@ -184,7 +176,7 @@ func IgnorePathSuffix(suffixs ...string) Filter {
 func AcceptPathMatch(regs ...regexp.Regexp) Filter {
 	return func(c *gin.Context) bool {
 		for _, reg := range regs {
-			if reg.Match([]byte(c.Request.URL.Path)) {
+			if reg.MatchString(c.Request.URL.Path) {
 				return true
 			}
 		}
@@ -196,7 +188,7 @@ func AcceptPathMatch(regs ...regexp.Regexp) Filter {
 func IgnorePathMatch(regs ...regexp.Regexp) Filter {
 	return func(c *gin.Context) bool {
 		for _, reg := range regs {
-			if reg.Match([]byte(c.Request.URL.Path)) {
+			if reg.MatchString(c.Request.URL.Path) {
 				return false
 			}
 		}
@@ -266,10 +258,10 @@ func IgnoreHostPrefix(prefixs ...string) Filter {
 	}
 }
 
-func AcceptHostSuffix(prefixs ...string) Filter {
+func AcceptHostSuffix(suffixs ...string) Filter {
 	return func(c *gin.Context) bool {
-		for _, prefix := range prefixs {
-			if strings.HasPrefix(c.Request.URL.Host, prefix) {
+		for _, suffix := range suffixs {
+			if strings.HasSuffix(c.Request.URL.Host, suffix) {
 				return true
 			}
 		}
@@ -293,7 +285,7 @@ func IgnoreHostSuffix(suffixs ...string) Filter {
 func AcceptHostMatch(regs ...regexp.Regexp) Filter {
 	return func(c *gin.Context) bool {
 		for _, reg := range regs {
-			if reg.Match([]byte(c.Request.URL.Host)) {
+			if reg.MatchString(c.Request.URL.Host) {
 				return true
 			}
 		}
@@ -305,7 +297,7 @@ func AcceptHostMatch(regs ...regexp.Regexp) Filter {
 func IgnoreHostMatch(regs ...regexp.Regexp) Filter {
 	return func(c *gin.Context) bool {
 		for _, reg := range regs {
-			if reg.Match([]byte(c.Request.URL.Host)) {
+			if reg.MatchString(c.Request.URL.Host) {
 				return false
 			}
 		}
