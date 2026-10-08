@@ -12,6 +12,7 @@ var _ http.ResponseWriter = (*bodyWriter)(nil)
 var _ http.Flusher = (*bodyWriter)(nil)
 var _ http.Hijacker = (*bodyWriter)(nil)
 var _ io.ReaderFrom = (*bodyWriter)(nil)
+var _ io.StringWriter = (*bodyWriter)(nil)
 
 type bodyWriter struct {
 	gin.ResponseWriter
@@ -24,17 +25,17 @@ type bodyWriter struct {
 func (w *bodyWriter) Write(b []byte) (int, error) {
 	length := len(b)
 
-	if w.body != nil {
-		if w.body.Len()+length > w.maxSize {
-			w.body.Truncate(min(w.maxSize, length, w.body.Len()))
-			w.body.Write(b[:min(w.maxSize-w.body.Len(), length)])
-		} else {
-			w.body.Write(b)
-		}
+	if w.body != nil && w.body.Len() < w.maxSize {
+		w.body.Write(b[:min(w.maxSize-w.body.Len(), length)])
 	}
 
 	w.bytes += length //nolint:staticcheck
 	return w.ResponseWriter.Write(b)
+}
+
+// implements io.StringWriter
+func (w *bodyWriter) WriteString(s string) (int, error) {
+	return w.Write([]byte(s))
 }
 
 // implements io.ReaderFrom
