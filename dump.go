@@ -20,6 +20,10 @@ type bodyWriter struct {
 	bytes   int
 }
 
+func (w *bodyWriter) Unwrap() http.ResponseWriter {
+	return w.ResponseWriter
+}
+
 // implements gin.ResponseWriter
 func (w *bodyWriter) Write(b []byte) (int, error) {
 	length := len(b)
